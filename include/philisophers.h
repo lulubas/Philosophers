@@ -24,26 +24,38 @@ typedef enum s_state
 	THINKING
 }	t_state;
 
-typedef struct s_info
-{
-	t_philo	**philos;
-	int		philo_num;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		target_eat;
-} t_info;
-
 typedef struct s_philo
 {
-	int		id;
-	t_state	state;
-	bool	finished;
-	pthread_t thread;
+	int				id;
+	t_state			state;
+	pthread_t		thread;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*r_fork;
+	bool			finished;
 } t_philo;
+
+typedef struct s_info
+{
+	t_philo			**philos;
+	pthread_mutex_t *forks;
+	int				philo_num;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				target_eat;
+	bool			dead;
+} t_info;
 
 int		ft_check_input(int argc, char **argv);
 t_info	*init_info(int argc, char **argv);
-void	ft_exit(char *error);
+void	init_mutexes(t_info *info);
+t_philo **init_philos_array(t_info *info);
+t_philo *init_philo(t_info *info, int num);
+void 	*routine(void *arg);
+void	ft_exit(t_info *info, char *error);
+void	join_threads(t_info *info);
+void	free_philos(t_info *info);
+void	free_forks(t_info *info);
+
 
 #endif
