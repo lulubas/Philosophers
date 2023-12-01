@@ -15,12 +15,15 @@
 int main(int argc, char **argv)
 {
 	int check;
-	t_info	info;
+	t_info	*info;
+	t_philo	**philos;
 
 	check = ft_check_input(argc, argv);
 	if (!check)
 		ft_exit("Arguments are incorrect");
-	info.philo_num = ft_atoi(argv[1]);
+	info = init_info(argc, argv);
+	philos = init_philos_array(info);
+
 }
 
 int	ft_check_input(int argc, char **argv)
@@ -46,6 +49,45 @@ int	ft_check_input(int argc, char **argv)
 		i++;
 	}
 	return (1);
+}
+t_info	*init_info(int argc, char **argv)
+{
+	t_info *info;
+
+	info = (t_info *)malloc(sizeof(t_info));
+	info->philos = NULL;
+	info->philo_num = ft_atoi(argv[1]);
+	info->time_to_die = ft_atoi(argv[2]);
+	info->time_to_eat = ft_atoi(argv[3]);
+	info->time_to_sleep = ft_atoi(argv[4]);
+	if (argc == 6)
+		info->target_eat = ft_atoi(argv[5]);
+	return(info);
+}
+
+t_philo **init_philos_array(t_info *info)
+{
+	t_philo **philos;
+	int	i;
+
+	int	i = 0;
+	philos = (t_philo **)malloc(sizeof(t_philo) * info->philo_num);
+	while (i < info->philo_num)
+	{
+		philos[i] = init_philo(i);
+		i++;
+	}
+}
+
+t_philo *init_philo(int num)
+{
+	t_philo *philo;
+	
+	philo = (t_philo *)malloc(sizeof(t_philo));
+	philo->id = num;
+	philo->state = THINKING;
+	philo->finished = false;
+	return(philo);
 }
 
 void ft_exit(char *error)

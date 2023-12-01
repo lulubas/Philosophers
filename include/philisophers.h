@@ -26,11 +26,12 @@ typedef enum s_state
 
 typedef struct s_info
 {
-	int	philo_num;
-	int	time_to_die;
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	target_eat;
+	t_philo	**philos;
+	int		philo_num;
+	int		time_to_die;
+	int		time_to_eat;
+	int		time_to_sleep;
+	int		target_eat;
 } t_info;
 
 typedef struct s_philo
@@ -39,10 +40,10 @@ typedef struct s_philo
 	t_state	state;
 	bool	finished;
 	pthread_t thread;
-
 } t_philo;
 
 int		ft_check_input(int argc, char **argv);
+t_info	*init_info(int argc, char **argv);
 void	ft_exit(char *error);
 
 #endif

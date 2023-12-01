@@ -12,7 +12,7 @@
 
 #Standard variables
 
-NAME		=	philisophers
+NAME		=	philosophers
 INCLUDE_DIR	= 	include
 LIBFT		=	libft/
 SRC_DIR 	=	src/
