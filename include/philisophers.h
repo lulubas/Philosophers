@@ -14,7 +14,8 @@
 # define PHILOSOPHERS_H
 
 # include "../libft/include/libft.h"
-#include <pthread.h>
+# include <pthread.h>
+# include <stdbool.h>
 
 //Enum for Philo state
 typedef enum s_state
