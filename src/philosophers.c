@@ -17,13 +17,15 @@ int main(int argc, char **argv)
 	int check;
 	t_info	*info;
 	t_philo	**philos;
+	struct timeval start_time;
 
 	info = NULL;
 	philos = NULL;
 	check = ft_check_input(argc, argv);
 	if (!check)
 		ft_exit(info, "Arguments are incorrect");
-	info = init_info(argc, argv);
+	gettimeofday(&start_time, NULL);
+	info = init_info(argc, argv, start_time);
 	init_mutexes(info);
 	info->philos = init_philos_array(info);
 	ft_exit(info, "End of main reached");

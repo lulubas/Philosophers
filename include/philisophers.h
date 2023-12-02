@@ -13,9 +13,9 @@
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
-# include "../libft/include/libft.h"
-# include <pthread.h>
-# include <stdbool.h>
+#include "../libft/include/libft.h"
+#include <pthread.h>
+#include <sys/time.h>
 
 //Enum for Philo state
 typedef enum s_state
@@ -25,13 +25,16 @@ typedef enum s_state
 	THINKING
 }	t_state;
 
+typedef struct s_info t_info;
 typedef struct s_philo
 {
 	int				id;
+	int				eat_count;
 	t_state			state;
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
+	t_info			*info;
 	bool			finished;
 } t_philo;
 
@@ -45,18 +48,34 @@ typedef struct s_info
 	int				time_to_sleep;
 	int				target_eat;
 	bool			dead;
+	pthread_mutex_t print;
+	struct timeval 	start_time;
 } t_info;
 
 int		ft_check_input(int argc, char **argv);
-t_info	*init_info(int argc, char **argv);
+
+//INIT
+t_info	*init_info(int argc, char **argv, struct timeval start_time);
 void	init_mutexes(t_info *info);
 t_philo **init_philos_array(t_info *info);
 t_philo *init_philo(t_info *info, int num);
+
+//ACTIONS
 void 	*routine(void *arg);
+void	to_think(t_philo *philo);
+void	to_eat(t_philo *philo);
+void	to_sleep(t_philo *philo);
+void	pick_up_forks(t_philo *philo);
+void	put_down_forks(t_philo *philo);
+
+//EXIT
 void	ft_exit(t_info *info, char *error);
 void	join_threads(t_info *info);
 void	free_philos(t_info *info);
 void	free_forks(t_info *info);
+
+//UTILS
+void	print_out(t_philo *philo, char *str);
 
 
 #endif

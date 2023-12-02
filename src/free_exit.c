@@ -24,6 +24,7 @@ void	ft_exit(t_info *info, char *error)
 			free_forks(info);
 		free (info);
 	}
+	pthread_mutex_destroy(&info->print);
 	ft_printf("%s\n", error);
 	exit (0);
 }

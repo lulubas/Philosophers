@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 # include "../include/philisophers.h"
 
-t_info	*init_info(int argc, char **argv)
+t_info	*init_info(int argc, char **argv, struct timeval start_time)
 {
 	t_info *info;
 
@@ -26,7 +26,9 @@ t_info	*init_info(int argc, char **argv)
 	else
 		info->target_eat = 0;
 	info->dead = false;
-	return(info);
+	pthread_mutex_init(&info->print, NULL);
+	info->start_time = start_time;
+	return (info);
 }
 
 void	init_mutexes(t_info *info)
@@ -71,7 +73,9 @@ t_philo *init_philo(t_info *info, int i)
 	philo->state = THINKING;
 	philo->l_fork = &info->forks[i];
 	philo->r_fork = &info->forks[(i + 1) % info->philo_num];
+	philo->info = info;
 	philo->finished = false;
+	philo->eat_count = 0;
 	return_value = pthread_create(&philo->thread, NULL, routine, (void *) philo);
 	if (return_value)
 		ft_exit(info, "Error creating the thread for philo");
