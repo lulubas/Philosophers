@@ -14,10 +14,11 @@
 
 int main(int argc, char **argv)
 {
-	int check;
-	t_info	*info;
-	t_philo	**philos;
-	struct timeval start_time;
+	int 			check;
+	t_info			*info;
+	t_philo			**philos;
+	struct timeval	start_time;
+	int				return_value;
 
 	info = NULL;
 	philos = NULL;
@@ -28,7 +29,14 @@ int main(int argc, char **argv)
 	info = init_info(argc, argv, start_time);
 	init_mutexes(info);
 	info->philos = init_philos_array(info);
-	ft_exit(info, "End of main reached");
+	init_workers(info);
+	return_value = pthread_join(info->monitor, NULL);
+	if (return_value)
+		ft_printf("Failed to join monitor thread\n");
+	if (info->dead == true)
+		ft_exit(info, "One philosopher died :(. End of dinner.");
+	if (info->all_finished == true)
+		ft_exit(info, "All philosophers have completed their meal :) End of dinner.");
 	return (1);
 }
 

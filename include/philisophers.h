@@ -30,11 +30,13 @@ typedef struct s_philo
 {
 	int				id;
 	int				eat_count;
-	t_state			state;
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
+	pthread_mutex_t	state_mutex;
 	t_info			*info;
+	struct timeval 	last_eat_time;
+	long			time_diff;
 	bool			finished;
 } t_philo;
 
@@ -48,7 +50,9 @@ typedef struct s_info
 	int				time_to_sleep;
 	int				target_eat;
 	bool			dead;
+	bool			all_finished;
 	pthread_mutex_t print;
+	pthread_t		monitor;
 	struct timeval 	start_time;
 } t_info;
 
@@ -59,6 +63,12 @@ t_info	*init_info(int argc, char **argv, struct timeval start_time);
 void	init_mutexes(t_info *info);
 t_philo **init_philos_array(t_info *info);
 t_philo *init_philo(t_info *info, int num);
+void	init_workers(t_info *info);
+void	*init_monitor(void *args);
+
+//WORKERS
+void	check_death(t_philo *philo);
+void	check_dinner_state(t_info *info);
 
 //ACTIONS
 void 	*routine(void *arg);
@@ -75,7 +85,9 @@ void	free_philos(t_info *info);
 void	free_forks(t_info *info);
 
 //UTILS
-void	print_out(t_philo *philo, char *str);
-
+void	print_out(t_philo *philo, char const *str, ...);
+void	print_state(t_info *info);
+long	get_time(struct timeval time);
+long	get_time_diff(struct timeval start, struct timeval end);
 
 #endif

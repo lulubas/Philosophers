@@ -22,12 +22,14 @@ void	*routine(void *arg)
 		pick_up_forks(philo);
 		to_eat(philo);
 		put_down_forks(philo);
-		to_sleep(philo);
+		pthread_mutex_lock(&philo->state_mutex);
 		if(philo->info->target_eat)
 		{
 			if(philo->eat_count == philo->info->target_eat)
 				philo->finished = true;
 		}
+		pthread_mutex_unlock(&philo->state_mutex);
+		to_sleep(philo);
 	}
 	return (NULL);
 }
@@ -39,9 +41,11 @@ void	to_think(t_philo *philo)
 
 void	to_eat(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->state_mutex);
+	gettimeofday(&philo->last_eat_time, NULL);
 	print_out(philo, "is eating");
 	philo->eat_count++;
-	ft_printf("%d meals completed", philo->eat_count);
+	pthread_mutex_unlock(&philo->state_mutex);
 	usleep(1000 * philo->info->time_to_eat);
 }
 
@@ -53,7 +57,7 @@ void	to_sleep(t_philo *philo)
 
 void	pick_up_forks(t_philo *philo)
 {
-	if (philo->id == philo->info->philo_num)
+	if (philo->id == philo->info->philo_num - 1)
 	{
 		pthread_mutex_lock(philo->r_fork);
 		print_out(philo, "has taken a fork (r)");

@@ -17,36 +17,33 @@ void	ft_exit(t_info *info, char *error)
 	{
 		if (info->philos)
 		{
-			join_threads(info);
+			print_state(info);
 			free_philos(info);
 		}
 		if (info->forks)
 			free_forks(info);
+		pthread_mutex_destroy(&info->print);
 		free (info);
 	}
-	pthread_mutex_destroy(&info->print);
 	ft_printf("%s\n", error);
 	exit (0);
 }
 
-void	join_threads(t_info *info)
+void	free_philos(t_info *info)
 {
 	int	i;
 	int	return_value;
 
 	i = 0;
 	while (i < info->philo_num)
-		return_value = pthread_join(info->philos[i++]->thread, NULL);
-}
-
-
-void free_philos(t_info *info)
-{
-	int	i;
-
-	i = 0;
-	while (i < info->philo_num)
-		free(info->philos[i++]);
+	{
+		return_value = pthread_join(info->philos[i]->thread, NULL);
+		if (return_value)
+			ft_printf("Failed to join philos threads\n");
+		pthread_mutex_destroy(&info->philos[i]->state_mutex);
+		free (info->philos[i]);
+		i++;
+	}
 	free (info->philos);
 }
 
