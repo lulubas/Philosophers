@@ -11,9 +11,10 @@
 /* ************************************************************************** */
 # include "../include/philisophers.h"
 
-t_info	*init_info(int argc, char **argv, struct timeval start_time)
+t_info	*init_info(int argc, char **argv)
 {
 	t_info *info;
+	struct timeval	start_time;
 
 	info = (t_info *)malloc(sizeof(t_info));
 	info->philos = NULL;
@@ -22,17 +23,13 @@ t_info	*init_info(int argc, char **argv, struct timeval start_time)
 	info->time_to_eat = ft_atoi(argv[3]);
 	info->time_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
-	{
 		info->target_eat = ft_atoi(argv[5]);
-		ft_printf("target_eat setup to %d\n", info->target_eat);
-	}
 	else
-	{
 		info->target_eat = 0;
-	}
-	info->dead = false;
 	info->all_finished = false;
+	info->all_alive = true;
 	pthread_mutex_init(&info->print, NULL);
+	gettimeofday(&start_time, NULL);
 	info->start_time = start_time;
 	return (info);
 }
@@ -76,17 +73,21 @@ t_philo *init_philo(t_info *info, int i)
 	if (!philo)
 		ft_exit(info, "Error allocating memory for philo");
 	philo->id = i;
+	philo->index = i;
 	philo->l_fork = &info->forks[i];
 	philo->r_fork = &info->forks[(i + 1) % info->philo_num];
+	pthread_mutex_init(&philo->data_access, NULL);
 	philo->info = info;
-	philo->finished = false;
+	gettimeofday(&current_time, NULL);
+	philo->last_eat_time = current_time;
 	philo->eat_count = 0;
-	print_out(philo, "initiated");
+	philo->can_eat = false;
+	philo->next_round = false;
+	philo->finished = false;
+	philo->dead = false;
 	return_value = pthread_create(&philo->thread, NULL, routine, (void *) philo);
 	if (return_value)
 		ft_exit(info, "Error creating the thread for philo");
-	gettimeofday(&current_time, NULL);
-	philo->last_eat_time = current_time;
 	return(philo);
 }
 
@@ -95,6 +96,9 @@ void	init_workers(t_info *info)
 	int	return_value;
 
 	return_value = pthread_create(&info->monitor, NULL, init_monitor, (void *) info);
+	if (return_value)
+		ft_exit(info, "Error creating the thread for philo");
+	return_value = pthread_create(&info->waiter, NULL, init_waiter, (void *) info);
 	if (return_value)
 		ft_exit(info, "Error creating the thread for philo");
 }

@@ -58,3 +58,11 @@ long	get_time_diff(struct timeval start, struct timeval end)
 	time_diff = get_time(end) - get_time(start);
 	return (time_diff);
 }
+
+int		dinner_is_on(t_info *info)
+{
+	if (info->all_alive == true && info->all_finished == false)
+		return (1);
+	else	
+		return(0);
+}

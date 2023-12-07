@@ -17,6 +17,7 @@ void	ft_exit(t_info *info, char *error)
 	{
 		if (info->philos)
 		{
+			join_threads(info);
 			print_state(info);
 			free_philos(info);
 		}
@@ -29,21 +30,26 @@ void	ft_exit(t_info *info, char *error)
 	exit (0);
 }
 
-void	free_philos(t_info *info)
+void	join_threads(t_info *info)
 {
 	int	i;
-	int	return_value;
 
 	i = 0;
 	while (i < info->philo_num)
 	{
-		return_value = pthread_join(info->philos[i]->thread, NULL);
-		if (return_value)
-			ft_printf("Failed to join philos threads\n");
-		pthread_mutex_destroy(&info->philos[i]->state_mutex);
-		free (info->philos[i]);
+		pthread_join(info->philos[i]->thread, NULL);
+		pthread_mutex_destroy(&info->philos[i]->data_access);
 		i++;
 	}
+}
+
+void	free_philos(t_info *info)
+{
+	int	i;
+
+	i = 0;
+	while (i < info->philo_num)
+		free (info->philos[i++]);
 	free (info->philos);
 }
 
