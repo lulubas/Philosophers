@@ -9,14 +9,13 @@
 /*   Updated: 2023/12/02 16:01:27 by lbastien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-# include "../include/philisophers.h"
+#include "../include/philosophers.h"
 
 void	print_out(t_philo *philo, const char *str, ...)
 {
-	struct timeval current_time;
-	long timestamp;
-	va_list	args;
+	struct timeval	current_time;
+	long			timestamp;
+	va_list			args;
 
 	gettimeofday(&current_time, NULL);
 	timestamp = get_time(current_time) - get_time(philo->info->start_time);
@@ -35,7 +34,7 @@ void	print_state(t_info *info)
 
 	i = 0;
 	ft_printf("=====\n");
-	while(i < info->philo_num)
+	while (i < info->philo_num)
 	{
 		ft_printf("Philo %d ate %d time(s)\n", i, info->philos[i]->eat_count);
 		i++;
@@ -55,14 +54,15 @@ long	get_time(struct timeval time)
 long	get_time_diff(struct timeval start, struct timeval end)
 {
 	long	time_diff;
+
 	time_diff = get_time(end) - get_time(start);
 	return (time_diff);
 }
 
-int		dinner_is_on(t_info *info)
+int	dinner_is_on(t_info *info)
 {
 	if (info->all_alive == true && info->all_finished == false)
 		return (1);
-	else	
-		return(0);
+	else
+		return (0);
 }

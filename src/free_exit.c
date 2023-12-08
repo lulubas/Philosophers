@@ -9,7 +9,7 @@
 /*   Updated: 2023/12/02 13:03:17 by lbastien         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-# include "../include/philisophers.h"
+#include "../include/philosophers.h"
 
 void	ft_exit(t_info *info, char *error)
 {
